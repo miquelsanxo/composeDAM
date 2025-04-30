@@ -1,0 +1,31 @@
+services:
+  app:
+    build: .
+    container_name: cyc-app
+    depends_on:
+      - db
+    env_file:
+      - .env
+    environment:
+      - DEBUG=False
+      - DATABASE_CONNECTION_URI=mysql://${DB_USER}:${DB_PASSWORD}@cyc-db:3306/${DB_DATABASE}
+    ports:
+      - ${PORT}:${PORT}
+    restart: always
+  
+  db:
+    image: mysql:9.2.0
+    container_name: cyc-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+    ports:
+      - 3306:3306
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+
+volumes:
+  db_data:
